@@ -106,7 +106,14 @@ extern void FDECL(interject, (int));
 #define Rand()	rand()
 #endif
 
+
+#ifdef _MSC_VER >= 1900 // this is Visual Studio 2015 C++ compiler.
+#define FCMASK	0x180	/* file creation mask i.e Read and Write */
+#else
 #define FCMASK	0660	/* file creation mask */
+#endif
+
+
 #define regularize	nt_regularize
 #define HLOCK "NHPERM"
 
