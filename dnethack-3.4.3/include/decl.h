@@ -97,6 +97,7 @@ E struct dgn_topology {		/* special dungeon levels for speed */
 #define ORCUS_LEVEL		1
 #define MALCANTHET_LEVEL	2
 #define GRAZ_ZT_LEVEL	3
+#define LOLTH_LEVEL		4
 	d_level	d_brine_level;
 	int		brine_variant;
 #define DEMOGORGON_LEVEL	1
@@ -147,7 +148,7 @@ E struct dgn_topology {		/* special dungeon levels for speed */
 		d_arcadia1, d_arcadia2, d_arcadia3, d_arcward, d_arcfort,
 		d_tower1, d_tower2, d_tower3, d_tower4, d_tower5,
 		d_tower6, d_tower7, d_tower8, d_tower9, d_towertop;
-	int alt_tower;
+	boolean alt_tower;
 	/*Fort Knox*/
     d_level	d_knox_level;
 	d_level d_minetown_level;
@@ -407,6 +408,7 @@ E NEARDATA struct obj *invent,
 	*uskin, *uamul, *uleft, *uright, *ublindf,
 	*uwep, *uswapwep, *uquiver;
 
+E NEARDATA struct obj *urope;		/* defined only when entangled */
 E NEARDATA struct obj *uchain;		/* defined only when punished */
 E NEARDATA struct obj *uball;
 E NEARDATA struct obj *migrating_objs;

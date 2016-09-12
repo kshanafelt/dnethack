@@ -3123,6 +3123,7 @@ dopois:
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 		case AD_STDY:{
 			if(is_orc(mtmp->data)) pline("%s curses and urges %s followers on.", Monnam(mtmp), mhis(mtmp));
+			else if(mtmp->data == &mons[PM_LEGION] || mtmp->data == &mons[PM_LEGIONNAIRE]); //no message
 			else pline("%s studies you carefully.", Monnam(mtmp));
 			u.ustdy = max(dmg,u.ustdy);
 			dmg = 0;
@@ -4471,8 +4472,8 @@ gazemu(mtmp, mattk)	/* monster gazes at you */
 				!is_blind(mtmp)
 			) {
 				int dmg = d((int)mattk->damn, (int)mattk->damd);
-				if(mtmp->data == &mons[PM_ORC_CAPTAIN] || mtmp->data == &mons[PM_BOLG]) 
-					pline("%s curses and urges %s followers on.", Monnam(mtmp), mhis(mtmp));
+				if(is_orc(mtmp->data)) pline("%s curses and urges %s followers on.", Monnam(mtmp), mhis(mtmp));
+				else if(mtmp->data == &mons[PM_LEGION] || mtmp->data == &mons[PM_LEGIONNAIRE]); //no message
 				else pline("%s studies you with a level stare.", Monnam(mtmp));
 				u.ustdy = max(dmg,u.ustdy);
 				dmg = 0;
@@ -5891,7 +5892,7 @@ register struct monst *mon;
 				attrcurse();
 			break;
 			case 7:
-		    if (Levitation || Is_airlevel(&u.uz)||Is_waterlevel(&u.uz))
+		    if (Levitation || Weightless||Is_waterlevel(&u.uz))
 				You("are motionlessly suspended.");
 #ifdef STEED
 			else if (u.usteed)
@@ -6219,7 +6220,7 @@ register struct monst *mon;
 							   "Fortunately, you're out of reach! %s away." :
 							   "Fortunately, you can't hold anything more! %s away.",
 							   The(aobjnam(optr,
-								 Is_airlevel(&u.uz) || u.uinwater ?
+								 Weightless || u.uinwater ?
 								   "slip" : "drop")),
 							   (const char *)0);
 					if(carried(optr)){
@@ -6245,7 +6246,7 @@ register struct monst *mon;
 							   "Fortunately, you're out of reach! %s away." :
 							   "Fortunately, you can't hold anything more! %s away.",
 							   The(aobjnam(optr,
-								 Is_airlevel(&u.uz) || u.uinwater ?
+								 Weightless || u.uinwater ?
 								   "slip" : "drop")),
 							   (const char *)0);
 					if(carried(optr)){
@@ -6274,7 +6275,7 @@ register struct monst *mon;
 							   "Fortunately, you're out of reach! %s away." :
 							   "Fortunately, you can't hold anything more! %s away.",
 							   The(aobjnam(optr,
-								 Is_airlevel(&u.uz) || u.uinwater ?
+								 Weightless || u.uinwater ?
 								   "slip" : "drop")),
 							   (const char *)0);
 					if(carried(optr)){
@@ -6301,7 +6302,7 @@ register struct monst *mon;
 							   "Fortunately, you're out of reach! %s away." :
 							   "Fortunately, you can't hold anything more! %s away.",
 							   The(aobjnam(optr,
-								 Is_airlevel(&u.uz) || u.uinwater ?
+								 Weightless || u.uinwater ?
 								   "slip" : "drop")),
 							   (const char *)0);
 					if(carried(optr)){
@@ -6374,14 +6375,14 @@ register struct monst *mon;
 				bless(optr);
 				hold_another_object(optr, u.uswallow ?
 				       "Oops!  %s out of your reach!" :
-				       (Is_airlevel(&u.uz) ||
+				       (Weightless ||
 					Is_waterlevel(&u.uz) ||
 					levl[u.ux][u.uy].typ < IRONBARS ||
 					levl[u.ux][u.uy].typ >= ICE) ?
 				       "Oops!  %s away from you!" :
 				       "Oops!  %s to the floor!",
 				       The(aobjnam(optr,
-					     Is_airlevel(&u.uz) || u.uinwater ?
+					     Weightless || u.uinwater ?
 						   "slip" : "drop")),
 				       (const char *)0);
 		   }
@@ -6392,14 +6393,14 @@ register struct monst *mon;
 			bless(optr);
 			(void) hold_another_object(optr, u.uswallow ?
 				       "Oops!  %s out of your reach!" :
-				       (Is_airlevel(&u.uz) ||
+				       (Weightless ||
 					Is_waterlevel(&u.uz) ||
 					levl[u.ux][u.uy].typ < IRONBARS ||
 					levl[u.ux][u.uy].typ >= ICE) ?
 				       "Oops!  %s away from you!" :
 				       "Oops!  %s to the floor!",
 				       The(aobjnam(optr,
-					     Is_airlevel(&u.uz) || u.uinwater ?
+					     Weightless || u.uinwater ?
 						   "slip" : "drop")),
 				       (const char *)0);
 			if(carried(optr)){
@@ -6417,14 +6418,14 @@ register struct monst *mon;
 				bless(optr);
 				hold_another_object(optr, u.uswallow ?
 				       "Oops!  %s out of your reach!" :
-				       (Is_airlevel(&u.uz) ||
+				       (Weightless ||
 					Is_waterlevel(&u.uz) ||
 					levl[u.ux][u.uy].typ < IRONBARS ||
 					levl[u.ux][u.uy].typ >= ICE) ?
 				       "Oops!  %s away from you!" :
 				       "Oops!  %s to the floor!",
 				       The(aobjnam(optr,
-					     Is_airlevel(&u.uz) || u.uinwater ?
+					     Weightless || u.uinwater ?
 						   "slip" : "drop")),
 				       (const char *)0);
 		   }

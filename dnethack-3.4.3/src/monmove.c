@@ -613,6 +613,33 @@ boolean digest_meal;
 		}
 		return;
 	}
+	/* Clouds on Lolth's level deal damage */
+	if(Is_lolth_level(&u.uz) && levl[mon->mx][mon->my].typ == CLOUD){
+		if (!(nonliving(mon->data) || breathless(mon->data))){
+			if (haseyes(mon->data) && mon->mcansee){
+				mon->mblinded = 1;
+				mon->mcansee = 0;
+			}
+			if (!resists_poison(mon)) {
+				pline("%s coughs!", Monnam(mon));
+				mon->mhp -= (d(3,8) + ((Amphibious && !flaming(youracedata)) ? 0 : rnd(6)));
+			} else if (!(amphibious(mon->data) && !flaming(youracedata))){
+				/* NB: Amphibious includes Breathless */
+				if (!(amphibious(mon->data) && !flaming(youracedata))) mon->mhp -= rnd(6);
+			}
+			if(mon->mhp <= 0){
+				monkilled(mon, "gas cloud", AD_DRST);
+				if(mon->mhp <= 0) return;	/* not lifesaved */
+			}
+		} else {
+			/* NB: Amphibious includes Breathless */
+			mon->mhp -= rnd(6);
+			if(mon->mhp <= 0){
+				monkilled(mon, "suffocating cloud", AD_DRST);
+				if(mon->mhp <= 0) return;	/* not lifesaved */
+			}
+		}
+	}
 	if(mon->mhp < mon->mhpmax && regenerates(mon->data)) mon->mhp++;
 	if(!nonliving(mon->data)){
 		if (mon->mhp < mon->mhpmax){
@@ -789,6 +816,32 @@ register struct monst *mtmp;
 	if(mdat == &mons[PM_GNOLL_MATRIARCH]){
 		if(!rn2(20)){
 			makemon(&mons[PM_GNOLL], mtmp->mx, mtmp->my, NO_MINVENT|MM_ADJACENTOK|MM_ADJACENTSTRICT);
+		}
+	}
+	if(mdat == &mons[PM_LEGION]){
+		int n = rnd(4);
+		for(n; n>0; n--) switch(rnd(7)){
+		case 1:
+			makemon(&mons[PM_LEGIONNAIRE], mtmp->mx, mtmp->my, NO_MINVENT|MM_ADJACENTOK|MM_ADJACENTSTRICT);
+		break;
+		case 2:
+			makemon(&mons[PM_GNOME_ZOMBIE], mtmp->mx, mtmp->my, NO_MINVENT|MM_ADJACENTOK|MM_ADJACENTSTRICT);
+		break;
+		case 3:
+			makemon(&mons[PM_ORC_ZOMBIE], mtmp->mx, mtmp->my, NO_MINVENT|MM_ADJACENTOK|MM_ADJACENTSTRICT);
+		break;
+		case 4:
+			makemon(&mons[PM_DWARF_ZOMBIE], mtmp->mx, mtmp->my, NO_MINVENT|MM_ADJACENTOK|MM_ADJACENTSTRICT);
+		break;
+		case 5:
+			makemon(&mons[PM_ELF_ZOMBIE], mtmp->mx, mtmp->my, NO_MINVENT|MM_ADJACENTOK|MM_ADJACENTSTRICT);
+		break;
+		case 6:
+			makemon(&mons[PM_HUMAN_ZOMBIE], mtmp->mx, mtmp->my, NO_MINVENT|MM_ADJACENTOK|MM_ADJACENTSTRICT);
+		break;
+		case 7:
+			makemon(&mons[PM_HALF_DRAGON_ZOMBIE], mtmp->mx, mtmp->my, NO_MINVENT|MM_ADJACENTOK|MM_ADJACENTSTRICT);
+		break;
 		}
 	}
 	if (mtmp->mstrategy & STRAT_ARRIVE) {
