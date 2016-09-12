@@ -3749,14 +3749,17 @@ wisp_shdw_dhit:
 	return((boolean)(nsum != 0));
 }
 
+
+
 boolean
-hmonwith(mon, tmp, weptmp, tchtmp, attacklist, nattk)		/* attack monster with monster attacks. */
+hmonwith2(mon, tmp, weptmp, tchtmp, attacklist, sum, nattk)		/* attack monster with monster attacks. */
 struct monst *mon;
 int tmp, weptmp, tchtmp;
 struct attack *attacklist;
+int sum[];
 int nattk;
 {
-	int	i, sum[nattk], hittmp = 0;
+	int	i, hittmp = 0;
 	int	nsum = 0;
 	int	dhit = 0;
 	struct attack *mattk;
@@ -3996,6 +3999,19 @@ wisp_shdw_dhit2:
 		break; /* If paralyzed while attacking, i.e. floating eye */
 	}
 	return((boolean)(nsum != 0));
+}
+
+boolean
+hmonwith(mon, tmp, weptmp, tchtmp, attacklist, nattk)		/* attack monster with monster attacks. */
+struct monst *mon;
+int tmp, weptmp, tchtmp;
+struct attack *attacklist;
+int nattk;
+{
+	int *sum = (int*)malloc(sizeof(int) * nattk);
+	boolean resault = hmonwith2(mon, tmp, weptmp, tchtmp, attacklist, sum, nattk);
+	free(sum);
+	return resault;
 }
 
 /*	Special (passive) attacks on you by monsters done here.		*/
