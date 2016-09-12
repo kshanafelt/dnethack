@@ -3749,15 +3749,17 @@ wisp_shdw_dhit:
 	return((boolean)(nsum != 0));
 }
 
+
+
 boolean
-hmonwith(mon, tmp, weptmp, tchtmp, attacklist, nattk)		/* attack monster with monster attacks. */
+hmonwith2(mon, tmp, weptmp, tchtmp, attacklist, sum, nattk)		/* attack monster with monster attacks. */
 struct monst *mon;
 int tmp, weptmp, tchtmp;
 struct attack *attacklist;
+int sum[];
 int nattk;
 {
 	int	i, hittmp = 0;
-	int *sum = (int *)malloc(sizeof(int) * nattk);
 	int	nsum = 0;
 	int	dhit = 0;
 	struct attack *mattk;
@@ -3984,11 +3986,9 @@ wisp_shdw_dhit2:
 	u.mh = -1;	/* dead in the current form */
 	rehumanize();
 	}
-	if (sum[i] == 2) {
-		free(sum);
-		return((boolean)passive(mon, 1, 0, mattk->aatyp, mattk->adtyp));
-		/* defender dead */
-	}
+	    if (sum[i] == 2)
+	return((boolean)passive(mon, 1, 0, mattk->aatyp, mattk->adtyp));
+						/* defender dead */
 	else {
 		(void) passive(mon, sum[i], 1, mattk->aatyp, mattk->adtyp);
 		nsum |= sum[i];
@@ -3998,8 +3998,20 @@ wisp_shdw_dhit2:
 	if (multi < 0)
 		break; /* If paralyzed while attacking, i.e. floating eye */
 	}
-	free(sum);
 	return((boolean)(nsum != 0));
+}
+
+boolean
+hmonwith(mon, tmp, weptmp, tchtmp, attacklist, nattk)		/* attack monster with monster attacks. */
+struct monst *mon;
+int tmp, weptmp, tchtmp;
+struct attack *attacklist;
+int nattk;
+{
+	int *sum = (int*)malloc(sizeof(int) * nattk);
+	boolean resault = hmonwith2(mon, tmp, weptmp, tchtmp, attacklist, sum, nattk);
+	free(sum);
+	return resault;
 }
 
 /*	Special (passive) attacks on you by monsters done here.		*/
@@ -4197,11 +4209,37 @@ dobpois:
 	  case AD_HLBD:
 //		pline("hp: %d x: %d y: %d", (mon->mhp*100)/mon->mhpmax, mon->mx, mon->my);
 	    if(!mhit) break; //didn't draw blood, forget it.
-
-		if(mon->mhp > .75*mon->mhpmax) makemon(&mons[PM_LEMURE], mon->mx, mon->my, MM_ADJACENTOK);
-		else if(mon->mhp > .50*mon->mhpmax) makemon(&mons[PM_HORNED_DEVIL], mon->mx, mon->my, MM_ADJACENTOK);
-		else if(mon->mhp > .25*mon->mhpmax) makemon(&mons[PM_BARBED_DEVIL], mon->mx, mon->my, MM_ADJACENTOK);
-		else if(mon->mhp > .00*mon->mhpmax) makemon(&mons[PM_PIT_FIEND], mon->mx, mon->my, MM_ADJACENTOK);
+		if(mon->data == &mons[PM_LEGION]){
+			int n = rnd(4);
+			for(n; n>0; n--) switch(rnd(7)){
+			case 1:
+				makemon(&mons[PM_LEGIONNAIRE], mon->mx, mon->my, NO_MINVENT|MM_ADJACENTOK|MM_ADJACENTSTRICT);
+			break;
+			case 2:
+				makemon(&mons[PM_GNOME_ZOMBIE], mon->mx, mon->my, NO_MINVENT|MM_ADJACENTOK|MM_ADJACENTSTRICT);
+			break;
+			case 3:
+				makemon(&mons[PM_ORC_ZOMBIE], mon->mx, mon->my, NO_MINVENT|MM_ADJACENTOK|MM_ADJACENTSTRICT);
+			break;
+			case 4:
+				makemon(&mons[PM_DWARF_ZOMBIE], mon->mx, mon->my, NO_MINVENT|MM_ADJACENTOK|MM_ADJACENTSTRICT);
+			break;
+			case 5:
+				makemon(&mons[PM_ELF_ZOMBIE], mon->mx, mon->my, NO_MINVENT|MM_ADJACENTOK|MM_ADJACENTSTRICT);
+			break;
+			case 6:
+				makemon(&mons[PM_HUMAN_ZOMBIE], mon->mx, mon->my, NO_MINVENT|MM_ADJACENTOK|MM_ADJACENTSTRICT);
+			break;
+			case 7:
+				makemon(&mons[PM_HALF_DRAGON_ZOMBIE], mon->mx, mon->my, NO_MINVENT|MM_ADJACENTOK|MM_ADJACENTSTRICT);
+			break;
+			}
+		} else {
+			if(mon->mhp > .75*mon->mhpmax) makemon(&mons[PM_LEMURE], mon->mx, mon->my, MM_ADJACENTOK);
+			else if(mon->mhp > .50*mon->mhpmax) makemon(&mons[PM_HORNED_DEVIL], mon->mx, mon->my, MM_ADJACENTOK);
+			else if(mon->mhp > .25*mon->mhpmax) makemon(&mons[PM_BARBED_DEVIL], mon->mx, mon->my, MM_ADJACENTOK);
+			else if(mon->mhp > .00*mon->mhpmax) makemon(&mons[PM_PIT_FIEND], mon->mx, mon->my, MM_ADJACENTOK);
+		}
 	  break;
 	  case AD_OONA:
 //			pline("hp: %d x: %d y: %d", (mon->mhp*100)/mon->mhpmax, mon->mx, mon->my);
